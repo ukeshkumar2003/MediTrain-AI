@@ -12,3 +12,20 @@ Medical Training Support: Enhance diagnostic and communication skills with tailo
 Health Resources: Access curated medical tips and insights.
 
 Intuitive Interface: Easy-to-use design for medical students and professionals alike.
+
+Project structure
+
+MediTrain AI Bot/
+├── Frontend/   (Streamlit application for user interaction)
+└── src/    (Flask-based API for processing user queries)
+
+ 
+ Getting Started
+
+ Frontend Setup (Streamlit)
+   1.Navigate to the frontend directory:
+
+            cd Frontend
+
+
+
