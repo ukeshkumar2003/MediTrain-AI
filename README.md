@@ -3,7 +3,11 @@ This project aims to develop an Artificial Intelligence (AI)-powered system desi
 
 
 Key Features
+
 Interactive Chatbot: Engage with AI to simulate real-time patient conversations.
+
 Medical Training Support: Enhance diagnostic and communication skills with tailored scenarios.
+
 Health Resources: Access curated medical tips and insights.
+
 Intuitive Interface: Easy-to-use design for medical students and professionals alike.
