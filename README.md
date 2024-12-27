@@ -13,7 +13,30 @@ Health Resources: Access curated medical tips and insights.
 
 Intuitive Interface: Easy-to-use design for medical students and professionals alike.
 
-Project structure
+##  **Project structure**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 MediTrain AI Bot/
 
