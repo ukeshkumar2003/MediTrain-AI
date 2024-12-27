@@ -91,7 +91,7 @@ Special thanks to our mentor for their guidance and support.
 
 ---
 
-## 📞 *Support or Contact*
+##  *Support or Contact*
 For inquiries or support, feel free to reach out via email or GitHub Issues.
 
 ---
