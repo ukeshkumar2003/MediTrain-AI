@@ -3,7 +3,7 @@
      This project aims to develop an Artificial Intelligence (AI)-powered system designed to assist healthcare professionals by providing predictive insights and diagnostic support for various diseases. The model leverages machine learning techniques to analyze patient data such as medical records, imaging data, lab results, and other clinical inputs.
 
 
-Key Features
+##  **Key Features**
 
 Interactive Chatbot: Engage with AI to simulate real-time patient conversations.
 
@@ -25,9 +25,25 @@ MediTrain AI Bot/
  Getting Started
 
  Frontend Setup (Streamlit)
+ 
    1.Navigate to the frontend directory:
 
             cd Frontend
+   2.Install the necessary dependenies:
+
+            pip install -r requirements.txt
+   3.Run the streamlit app:
+
+            streamlit run streamlit_app.py
+ The frontend will be available at:
+
+ 
+Backend setup (Flask)
+
+   1.Navigate to the backend directory:
+   
+
+ 
 
 
 
