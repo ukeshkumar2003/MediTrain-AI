@@ -17,6 +17,7 @@
 
 MediTrain AI Bot/
 ├── Frontend/   (Streamlit application for user interaction)
+
 └── src/    (Flask-based API for processing user queries)
 
 
