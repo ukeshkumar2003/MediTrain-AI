@@ -43,7 +43,7 @@ MediTrain AI Bot/
    streamlit run streamlit_app.py
    
 
-The frontend will be available at: 'http://localhost:2003'
+The frontend will be available at: 'http://localhost:8501'
 
 ### Backend Setup (Flask)
 
