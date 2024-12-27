@@ -1,30 +1,11 @@
-import os
-from dotenv import load_dotenv
-
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+import openai
 
-from langchain.chains import LLMChain
-from langchain_core.prompts import (
-    ChatPromptTemplate,
-    HumanMessagePromptTemplate,
-    MessagesPlaceholder,
-)
-from langchain_core.messages import SystemMessage
-from langchain.chains.conversation.memory import ConversationBufferWindowMemory
-from langchain_groq import ChatGroq
+# Initialize Flask app
+app = Flask(_name_)
 
-load_dotenv()
-
-app = Flask(__name__)
-
-CORS(app)
-
-
-groq_api_key = os.environ.get("API_KEY")
-model = "llama3-8b-8192"
-
-client = ChatGroq(groq_api_key=groq_api_key, model_name=model)
+# Set your OpenAI API key
+openai.api_key = "your_openai_api_key"
 
 # System prompt
 SYSTEM_PROMPT = """
@@ -56,44 +37,30 @@ Tone:
 3. Neutral, avoiding personal opinions or biases unless explicitly required by the user.
 4. Supportive, offering encouragement, feedback, and additional resources when appropriate.
 """
-conversational_memory_length = 5
 
-memory = ConversationBufferWindowMemory(
-    k=conversational_memory_length, memory_key="chat_history", return_messages=True
-)
+@app.route('/chat', methods=['POST'])
+def chat():
+    # Get user input from the request
+    data = request.get_json()
+    user_message = data.get("message", "")
+    
+    if not user_message:
+        return jsonify({"error": "Message cannot be empty"}), 400
 
-
-def get_reponse(text):
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            SystemMessage(content=system_prompt),
-            MessagesPlaceholder(variable_name="chat_history"),
-            HumanMessagePromptTemplate.from_template("{human_input}"),
-        ]
-    )
-    conversation = LLMChain(
-        llm=client,
-        prompt=prompt,
-        verbose=False,
-        memory=memory,
-    )
-    response = conversation.predict(human_input=text)
-    return response
-
-
-@app.route("/response", methods=["POST"])
-def response():
+    # Make a call to OpenAI API
     try:
-        data = request.get_json()
-        query = data.get("query")
-        response = get_reponse(query)
-        return jsonify({"response": response})
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user_message}
+            ]
+        )
+        assistant_response = response['choices'][0]['message']['content']
+        return jsonify({"response": assistant_response})
     except Exception as e:
-        print(e)
         return jsonify({"error": str(e)}), 500
 
-
-if __name__ == "__main__":
-    # Use the PORT environment variable for compatibility with Render
-    port = int(os.environ.get("PORT", 5000))  # Default to 5000 if not set
-    app.run(host="0.0.0.0", port=port, debug=True)
+# Run the Flask app
+if _name_ == '_main_':
+    app.run(debug=True)
