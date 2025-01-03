@@ -1,4 +1,21 @@
+# Flask API for backend
+from flask import Flask, request, jsonify
 import streamlit as st
+
+# Flask app setup
+app = Flask(_name_)
+
+# API Endpoint
+@app.route("/response", methods=["POST"])
+def response():
+    try:
+        data = request.get_json()
+        query = data.get("query")
+        response = start_meditrain_ai(query)  # Use the meditation assistant's logic
+        return jsonify({"response": response})
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
 
 # Function to simulate conversation and meditation AI process
 def start_meditrain_ai(user_input):
@@ -20,12 +37,12 @@ def start_meditrain_ai(user_input):
         return "I'm here to help you with meditation. How can I assist you today?"
 
 # Streamlit App
-def main():
+def run_streamlit():
     st.title("Meditrain AI - Meditation Assistant")
 
     # Instruction and description of the app
     st.write("""
-    **Welcome to Meditrain AI!**  
+    *Welcome to Meditrain AI!*  
     You can talk to me about meditation, start a session, or ask questions. I am here to help you relax and meditate.
     
     Type your message below, and I'll respond accordingly.
@@ -39,7 +56,7 @@ def main():
         if user_input:
             # Get AI's response based on user input
             response = start_meditrain_ai(user_input)
-            st.write(f"**Meditrain AI**: {response}")
+            st.write(f"*Meditrain AI*: {response}")
         else:
             st.write("Please type something to start the conversation.")
 
@@ -60,6 +77,18 @@ def main():
         st.write("Starting your 10-minute guided meditation session. Follow my instructions to relax.")
         # Additional logic for the meditation session can be added here
 
-if __name__ == "__main__":
-    # app.run(debug=True)
-    app.run(host="0.0.0.0")
+# Main function to run both Flask and Streamlit
+if _name_ == "_main_":
+    import threading
+    import os
+
+    # Start Flask app in a thread
+    def run_flask():
+        app.run(host="0.0.0.0", port=5000)
+
+    flask_thread = threading.Thread(target=run_flask)
+    flask_thread.daemon = True
+    flask_thread.start()
+
+    # Run Streamlit
+    run_streamlit()
