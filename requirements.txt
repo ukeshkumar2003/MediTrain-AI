@@ -8,4 +8,3 @@ requests
 phyton
 langchain-core
 langchain==0.1.16
-langchain.gorq
