@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 import streamlit as st
 
 # Flask app setup
-app = Flask(_name_)
+app = Flask(__name__)
 
 # API Endpoint
 @app.route("/response", methods=["POST"])
@@ -78,7 +78,7 @@ def run_streamlit():
         # Additional logic for the meditation session can be added here
 
 # Main function to run both Flask and Streamlit
-if _name_ == "_main_":
+if __name__ == "__main__":
     import threading
     import os
 
