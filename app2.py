@@ -1,21 +1,4 @@
-# Flask API for backend
-from flask import Flask, request, jsonify
 import streamlit as st
-
-# Flask app setup
-app = Flask(__name__)
-
-# API Endpoint
-@app.route("/response", methods=["POST"])
-def response():
-    try:
-        data = request.get_json()
-        query = data.get("query")
-        response = start_meditrain_ai(query)  # Use the meditation assistant's logic
-        return jsonify({"response": response})
-    except Exception as e:
-        print(e)
-        return jsonify({"error": str(e)}), 500
 
 # Function to simulate conversation and meditation AI process
 def start_meditrain_ai(user_input):
@@ -77,18 +60,6 @@ def run_streamlit():
         st.write("Starting your 10-minute guided meditation session. Follow my instructions to relax.")
         # Additional logic for the meditation session can be added here
 
-# Main function to run both Flask and Streamlit
+# Run the Streamlit app
 if __name__ == "__main__":
-    import threading
-    import os
-
-    # Start Flask app in a thread
-    def run_flask():
-        app.run(host="0.0.0.0", port=5000)
-
-    flask_thread = threading.Thread(target=run_flask)
-    flask_thread.daemon = True
-    flask_thread.start()
-
-    # Run Streamlit
     run_streamlit()
