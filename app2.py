@@ -1,86 +1,64 @@
-import os
-from flask import Flask, render_template, request, jsonify
-import numpy as np
-import random
-import joblib  # For loading pre-trained machine learning models (if any)
-import tensorflow as tf  # For deep learning models
-from datetime import datetime
+import streamlit as st
 
-# Initialize Flask app
-app = Flask(__name__)
-
-# Load a pre-trained model (for example, a stress prediction model)
-# Assuming you have a model saved as 'stress_model.pkl' or 'stress_model.h5'
-try:
-    model = joblib.load('stress_model.pkl')  # Use joblib for traditional ML models
-except FileNotFoundError:
-    model = None  # In case the model doesn't exist
-
-# Placeholder function for meditation audio selection (could integrate with a database)
-def get_meditation_audio():
-    audio_files = ["calm_audio_1.mp3", "calm_audio_2.mp3", "calm_audio_3.mp3"]
-    return random.choice(audio_files)
-
-# Home route to render the index page
-@app.route('/')
-def home():
-    return render_template('index.html')
-
-# Route for stress level prediction (input through a simple form or API)
-@app.route('/predict', methods=['POST'])
-def predict_stress():
-    if model:
-        try:
-            # Example: Input features could be heart rate, mood, etc.
-            heart_rate = float(request.form['heart_rate'])
-            mood = float(request.form['mood'])  # A mood scale from 1-10
-
-            # Example input for the model (you'd scale or process it depending on your model)
-            features = np.array([[heart_rate, mood]])
-
-            # Predict stress level using the model
-            prediction = model.predict(features)
-            return jsonify({"stress_level": prediction[0]})
-        except Exception as e:
-            return jsonify({"error": str(e)})
+# Function to simulate conversation and meditation AI process
+def start_meditrain_ai(user_input):
+    # Simulate the conversation flow based on user input
+    user_input = user_input.lower()
+    
+    if 'start' in user_input:
+        return "Starting your meditation session. Please relax and follow the guidance."
+    elif 'how' in user_input and 'meditation' in user_input:
+        return ("Meditation helps in reducing stress, enhancing focus, and calming the mind. "
+                "It involves deep breathing, mindfulness, and staying present in the moment.")
+    elif 'help' in user_input:
+        return "I am Meditrain AI. I can guide you through meditation sessions and answer questions about the process."
+    elif 'thank' in user_input:
+        return "You're welcome! Feel free to reach out whenever you need assistance."
+    elif 'time' in user_input and 'session' in user_input:
+        return "A typical meditation session can last anywhere from 5 to 30 minutes depending on your preference."
     else:
-        return jsonify({"error": "Model not loaded or found!"})
+        return "I'm here to help you with meditation. How can I assist you today?"
 
-# Route for meditation session (provides a meditation audio link)
-@app.route('/meditate', methods=['GET'])
-def meditate():
-    audio_file = get_meditation_audio()
-    return render_template('meditate.html', audio_file=audio_file)
+# Streamlit App
+def main():
+    st.title("Meditrain AI - Meditation Assistant")
 
-# Route for tracking user progress (save the user's meditation sessions, etc.)
-@app.route('/track', methods=['POST'])
-def track_progress():
-    try:
-        # Get data from form or request
-        user_id = request.form['user_id']
-        session_duration = int(request.form['session_duration'])  # Minutes spent meditating
-        session_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Instruction and description of the app
+    st.write("""
+    **Welcome to Meditrain AI!**  
+    You can talk to me about meditation, start a session, or ask questions. I am here to help you relax and meditate.
+    
+    Type your message below, and I'll respond accordingly.
+    """)
 
-        # Here, we could save this data to a database or file (For demo, we just print it)
-        print(f"User {user_id} meditated for {session_duration} minutes on {session_date}")
+    # Create a text input for the user to type their message
+    user_input = st.text_input("Ask me about meditation:")
 
-        # Returning success response
-        return jsonify({"status": "success", "message": "Meditation session saved!"})
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)})
+    # Create a button to submit the user's input
+    if st.button('Send'):
+        if user_input:
+            # Get AI's response based on user input
+            response = start_meditrain_ai(user_input)
+            st.write(f"**Meditrain AI**: {response}")
+        else:
+            st.write("Please type something to start the conversation.")
 
-# Route for getting daily tips or quotes for mindfulness
-@app.route('/tip', methods=['GET'])
-def get_mindfulness_tip():
-    tips = [
-        "Breathe deeply and focus on the present moment.",
-        "Take a few moments to stretch and release tension.",
-        "Start your day with gratitude and calmness.",
-        "Mindfulness is a practice. Be patient with yourself.",
-        "Focus on your breathing to reduce stress."
-    ]
-    return jsonify({"tip": random.choice(tips)})
+    # Chat History (keep track of previous conversation)
+    if 'chat_history' not in st.session_state:
+        st.session_state.chat_history = []
 
-# Main entry point for the Flask application
-if __name__ == '__main__':
-    app.run(debug=True)
+    if user_input:
+        st.session_state.chat_history.append(f"You: {user_input}")
+        st.session_state.chat_history.append(f"Meditrain AI: {start_meditrain_ai(user_input)}")
+
+    # Display chat history
+    for message in st.session_state.chat_history:
+        st.write(message)
+
+    # Optionally, add more interactive features like session length, type of meditation, etc.
+    if st.button("Start Guided Meditation (10 minutes)"):
+        st.write("Starting your 10-minute guided meditation session. Follow my instructions to relax.")
+        # Additional logic for the meditation session can be added here
+
+if __name__ == "__main__":
+    main()
