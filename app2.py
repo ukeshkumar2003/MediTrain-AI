@@ -1,4 +1,8 @@
 import streamlit as st
+from flask import Flask
+
+# Initialize Flask app
+app = Flask(__name__)
 
 # Function to simulate conversation and meditation AI process
 def start_meditrain_ai(user_input):
@@ -60,6 +64,17 @@ def run_streamlit():
         st.write("Starting your 10-minute guided meditation session. Follow my instructions to relax.")
         # Additional logic for the meditation session can be added here
 
-# Run the Streamlit app
+# Main function to run both Flask and Streamlit
 if __name__ == "__main__":
+    import threading
+
+    # Start Flask app in a thread (if you still want Flask for a backend server)
+    def run_flask():
+        app.run(host="0.0.0.0", port=5000)  # Running Flask on all IPs on port 5000
+
+    flask_thread = threading.Thread(target=run_flask)
+    flask_thread.daemon = True
+    flask_thread.start()
+
+    # Run Streamlit
     run_streamlit()
