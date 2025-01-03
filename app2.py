@@ -61,4 +61,5 @@ def main():
         # Additional logic for the meditation session can be added here
 
 if __name__ == "__main__":
-    main()
+    # app.run(debug=True)
+    app.run(host="0.0.0.0")
