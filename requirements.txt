@@ -7,5 +7,5 @@ groq
 requests
 phyton
 langchain-core
-langchain==0. 1. 16
+langchain==0.1.16
 langchain.gorq
