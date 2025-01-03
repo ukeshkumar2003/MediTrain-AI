@@ -6,4 +6,6 @@ Flask
 groq
 requests
 phyton
-langchain
+langchain-core
+langchain==0. 1. 16
+langchain.gorq
