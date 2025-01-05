@@ -61,6 +61,6 @@ def chat():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Run the Flask app
-if _name_ == '_main_':
-    app.run(debug=True)
+if __name__ == "__main__":
+    # app.run(debug=True)
+    app.run(host="0.0.0.0")rue)
