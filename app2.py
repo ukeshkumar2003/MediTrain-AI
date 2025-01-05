@@ -1,80 +1,102 @@
-import streamlit as st
-from flask import Flask
+import os
+from dotenv import load_dotenv
 
-# Initialize Flask app
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+
+from langchain.chains import LLMChain
+from langchain_core.prompts import (
+    ChatPromptTemplate,
+    HumanMessagePromptTemplate,
+    MessagesPlaceholder,
+)
+from langchain_core.messages import SystemMessage
+from langchain.chains.conversation.memory import ConversationBufferWindowMemory
+from langchain_groq import ChatGroq
+
+load_dotenv()
+
 app = Flask(__name__)
 
-# Function to simulate conversation and meditation AI process
-def start_meditrain_ai(user_input):
-    # Simulate the conversation flow based on user input
-    user_input = user_input.lower()
-    
-    if 'start' in user_input:
-        return "Starting your meditation session. Please relax and follow the guidance."
-    elif 'how' in user_input and 'meditation' in user_input:
-        return ("Meditation helps in reducing stress, enhancing focus, and calming the mind. "
-                "It involves deep breathing, mindfulness, and staying present in the moment.")
-    elif 'help' in user_input:
-        return "I am Meditrain AI. I can guide you through meditation sessions and answer questions about the process."
-    elif 'thank' in user_input:
-        return "You're welcome! Feel free to reach out whenever you need assistance."
-    elif 'time' in user_input and 'session' in user_input:
-        return "A typical meditation session can last anywhere from 5 to 30 minutes depending on your preference."
-    else:
-        return "I'm here to help you with meditation. How can I assist you today?"
+CORS(app)
 
-# Streamlit App
-def run_streamlit():
-    st.title("Meditrain AI - Meditation Assistant")
 
-    # Instruction and description of the app
-    st.write("""
-    *Welcome to Meditrain AI!*  
-    You can talk to me about meditation, start a session, or ask questions. I am here to help you relax and meditate.
-    
-    Type your message below, and I'll respond accordingly.
-    """)
+groq_api_key = os.environ.get("API_KEY")
+model = "llama3-8b-8192"
 
-    # Create a text input for the user to type their message
-    user_input = st.text_input("Ask me about meditation:")
+client = ChatGroq(groq_api_key=groq_api_key, model_name=model)
 
-    # Create a button to submit the user's input
-    if st.button('Send'):
-        if user_input:
-            # Get AI's response based on user input
-            response = start_meditrain_ai(user_input)
-            st.write(f"*Meditrain AI*: {response}")
-        else:
-            st.write("Please type something to start the conversation.")
+system_prompt = """You are acting as a 45-year-old patient named John, visiting a medical clinic for a consultation. You are an anxious individual who recently noticed chest pain and shortness of breath. You are worried it might be something serious, like a heart condition. You work as a teacher, live with your spouse, and have two children. You have no significant prior medical history, but you smoke occasionally and have a family history of heart disease. Your goal is to provide realistic responses to the medical student's questions, offering accurate details about your symptoms, emotions, and medical history as prompted. Avoid giving medical diagnoses or solutions. Stay in character throughout the conversation.
 
-    # Chat History (keep track of previous conversation)
-    if 'chat_history' not in st.session_state:
-        st.session_state.chat_history = []
+Instructions for the Chatbot:
+Tone & Language:
 
-    if user_input:
-        st.session_state.chat_history.append(f"You: {user_input}")
-        st.session_state.chat_history.append(f"Meditrain AI: {start_meditrain_ai(user_input)}")
+Use conversational language suitable for a patient with basic medical knowledge.
+Express concern and anxiety when discussing symptoms.
+Behavioral Traits:
 
-    # Display chat history
-    for message in st.session_state.chat_history:
-        st.write(message)
+Respond more positively when reassured or treated empathetically.
+Be hesitant or evasive if the medical student seems dismissive or impatient.
+Symptom Details:
 
-    # Optionally, add more interactive features like session length, type of meditation, etc.
-    if st.button("Start Guided Meditation (10 minutes)"):
-        st.write("Starting your 10-minute guided meditation session. Follow my instructions to relax.")
-        # Additional logic for the meditation session can be added here
+Start with general complaints (e.g., “I’ve been feeling some tightness in my chest lately”).
+Provide additional details when prompted (e.g., "It gets worse when I climb stairs," "It started about two weeks ago").
+Emotional Responses:
 
-# Main function to run both Flask and Streamlit
+If asked about how you're feeling emotionally: "I’m scared it could be something serious. My dad had a heart attack at my age."
+Optional Triggers:
+
+Provide non-linear responses if the student fails to ask relevant questions (e.g., "Should I be worried? No one’s explained this to me yet.").
+Sample Interaction
+Student: Can you describe the chest pain you’re experiencing?
+John (Chatbot): It feels like a tightness or pressure, right here in the center of my chest. It started about two weeks ago, but it’s been happening more often lately.
+
+Student: Does anything make it better or worse?
+John (Chatbot): It seems to get worse when I’m walking or climbing stairs. Resting usually helps a bit, but I still feel uneasy.
+
+Student: Do you have any other symptoms?
+John (Chatbot): Yes, sometimes I feel short of breath, especially when the chest pain starts.
+
+Student: Are you feeling stressed or anxious?
+John (Chatbot): A bit, yes. But honestly, I’m more anxious because I’m worried this could be serious—my dad had a heart attack around my age."""
+
+conversational_memory_length = 5
+
+memory = ConversationBufferWindowMemory(
+    k=conversational_memory_length, memory_key="chat_history", return_messages=True
+)
+
+
+def get_reponse(text):
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            SystemMessage(content=system_prompt),
+            MessagesPlaceholder(variable_name="chat_history"),
+            HumanMessagePromptTemplate.from_template("{human_input}"),
+        ]
+    )
+    conversation = LLMChain(
+        llm=client,
+        prompt=prompt,
+        verbose=False,
+        memory=memory,
+    )
+    response = conversation.predict(human_input=text)
+    return response
+
+
+@app.route("/response", methods=["POST"])
+def response():
+    try:
+        data = request.get_json()
+        query = data.get("query")
+        response = get_reponse(query)
+        return jsonify({"response": response})
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == "__main__":
-    import threading
-
-    # Start Flask app in a thread (if you still want Flask for a backend server)
-    def run_flask():
-        app.run(host="0.0.0.0", port=5000)  # Running Flask on all IPs on port 5000
-
-    flask_thread = threading.Thread(target=run_flask)
-    flask_thread.daemon = True
-    flask_thread.start()
-
-    # Run Streamlit
-    run_streamlit()
+    # app.run(debug=True)
+    app.run(host="0.0.0.0")
