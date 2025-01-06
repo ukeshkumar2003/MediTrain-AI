@@ -49,3 +49,6 @@ def main():
 
 if _name_ == "_main_":
     main()
+# Example: Hero image
+    hero_image = Image.open("hero_image.jpg")  # Replace with your image path
+    st.image(hero_image, use_column_width=True)
