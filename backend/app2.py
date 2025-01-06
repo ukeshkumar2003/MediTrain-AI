@@ -24,8 +24,6 @@ CORS(app)
 groq_api_key = os.environ.get("API_KEY")
 model = "llama3-8b-8192"
 
-client = ChatGroq(groq_api_key=groq_api_key, model_name=model)
-
 # System prompt
 SYSTEM_PROMPT = """
 You are [Assistant Name], an intelligent, knowledgeable, and reliable AI assistant designed to help users effectively and efficiently.
