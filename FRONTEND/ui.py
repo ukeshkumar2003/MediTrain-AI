@@ -38,7 +38,16 @@ elif menu == "Diagnosis Assistance":
     # Process and display results
     if st.button("Analyze Symptoms"):
         # Placeholder for AI diagnosis function
-        st.success("AI Analysis in Progress...")
+        st.success("symptoms = "[symptoms]"
+test_results = "[result/condition]"
+treatment_plan = "[treatment plan or next steps]"
+
+# Format the diagnosis result with success status
+diagnosis_result = f"Patient presents with {symptoms}.\nDiagnostic tests indicate {test_results}.\nRecommended treatment includes {treatment_plan}.\nStatus: Success"
+
+# Output the diagnosis result
+print(diagnosis_result)
+
         st.write("This is a placeholder for diagnosis results.")
         # Replace with your backend AI logic
 
