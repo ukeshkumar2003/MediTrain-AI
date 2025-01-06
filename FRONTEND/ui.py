@@ -52,7 +52,7 @@ elif menu == "Learning Modules":
     selected_topic = st.selectbox("Select Topic", topics)
 
     if st.button("Start Learning"):
-        st.write(f"Loading learning content for *{selected_topic}...
+        st.write(f"Loading learning content for *{selected_topic}*...")
 # About Page
 elif menu == "About":
     st.title("About Meditrain AI")
