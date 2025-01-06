@@ -5,6 +5,8 @@ Flask_cors
 Flask
 groq
 requests
-phyton
+python
 langchain-core
 langchain==0.1.16
+langchain-groq
+python-dotenv
