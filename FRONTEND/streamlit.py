@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # Backend API URL
-API_URL = "BACKEND_URL"
+API_URL =  os.environ.get("BACKEND_URL")
 
 # Streamlit app configuration
 st.set_page_config(page_title="AI Chat Assistant", layout="centered")
