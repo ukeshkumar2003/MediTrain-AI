@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
 
-# Backend API URL
 backend_url =  os.environ.get("BACKEND_URL")
 
 # Streamlit app configuration
