@@ -1,51 +1,60 @@
 import streamlit as st
 import requests
 
-backend_url =  os.environ.get("BACKEND_URL")
 
-# Streamlit app configuration
-st.set_page_config(page_title="AI Chat Assistant", layout="centered")
+# Set up the Streamlit app
 
-# App Header
-st.title("AI Chat Assistant")
-st.write("Interact with your intelligent assistant below:")
+backend_url = os.environ.get("BACKEND_URL")
 
-# Chat history container
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+def main():
+    st.title("Basic Chatbot App")
+    st.write("Type your query below and get a response!")
 
-# Display chat history
-for message in st.session_state.messages:
-    if message["sender"] == "user":
-        st.markdown(f"*You:* {message['message']}")
-    else:
-        st.markdown(f"*Assistant:* {message['message']}")
+    # Initialize session state for storing conversation history
+    if "conversation" not in st.session_state:
+        st.session_state["conversation"] = []
 
-# Input for user message
-user_input = st.text_input("Type your message:", key="user_input")
+    # Input text box for the user
+    user_query = st.text_input("Your Query:", placeholder="Ask something...")
 
-# Submit button
-if st.button("Send"):
-    if user_input:
-        # Add user message to session state
-        st.session_state.messages.append({"sender": "user", "message": user_input})
+    # Submit button
+    if st.button("Send"):
+        if user_query:
+            # Prepare the payload for the POST request
+            payload = {"query": user_query}
 
-        try:
-            # Send the user message to the backend
-            response = requests.post(API_URL, json={"query": user_input})
-            response_data = response.json()
+            try:
+                # Make the POST request to the API endpoint
+                # Replace 'API_ENDPOINT_URL' with the actual endpoint URL
+                response = requests.post(f"{backend_url}/response", json=payload)
 
-            # Get the assistant response
-            if "response" in response_data:
-                assistant_message = response_data["response"]
-            else:
-                assistant_message = "No response from the assistant."
+                if response.status_code == 200:
+                    # Parse the JSON response
+                    data = response.json()
 
-            # Add assistant message to session state
-            st.session_state.messages.append({"sender": "assistant", "message": assistant_message})
+                    # Extract and display the chatbot response
+                    bot_response = data.get("response", "No response found.")
 
-        except Exception as e:
-            st.session_state.messages.append({"sender": "assistant", "message": f"Error: {e}"})
-        
-        # Clear the input box after sending the message
-        st.experimental_rerun()
+                    # Save the conversation to session state
+                    st.session_state["conversation"].append(
+                        {"user": user_query, "bot": bot_response}
+                    )
+                    # st.success(f"Chatbot: {bot_response}")
+                else:
+                    st.error(
+                        f"Error {response.status_code}: Unable to get a response from the API."
+                    )
+            except requests.exceptions.RequestException as e:
+                st.error(f"An error occurred: {e}")
+        else:
+            st.warning("Please enter a query before sending.")
+
+    # Display the conversation history
+    st.write("### Conversation History")
+    for chat in st.session_state["conversation"]:
+        st.write(f"**You:** {chat['user']}")
+        st.write(f"**Chatbot:** {chat['bot']}")
+
+
+if __name__ == "__main__":
+    main()
