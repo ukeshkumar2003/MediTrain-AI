@@ -52,11 +52,7 @@ elif menu == "Learning Modules":
     selected_topic = st.selectbox("Select Topic", topics)
 
     if st.button("Start Learning"):
-        st.write(f"Loading learning content for *{selected_topic}*Here’s a 2-line prompt for a cardiology diagnosis:
-
-"Patient presents with chest pain and irregular heartbeat. ECG results show signs of [condition], and treatment involves [treatment plan]."")
-        # Replace with learning module content retrieval
-
+        st.write(f"Loading learning content for *{selected_topic}...
 # About Page
 elif menu == "About":
     st.title("About Meditrain AI")
