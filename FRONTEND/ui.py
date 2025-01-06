@@ -25,10 +25,6 @@ if menu == "Home":
     with cutting-edge tools for learning, diagnosis, and skill enhancement.
     """)
 
-    # Example: Hero image
-    hero_image = Image.open("hero_image.jpg")  # Replace with your image path
-    st.image(hero_image, use_column_width=True)
-
 # Diagnosis Assistance
 elif menu == "Diagnosis Assistance":
     st.title("Diagnosis Assistance")
