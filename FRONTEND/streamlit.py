@@ -9,7 +9,7 @@ load_dotenv()
 backend_url = os.environ.get("BACKEND_URL")
 
 def main():
-    st.title("Basic Chatbot App")
+    st.title("MediTrain-AI bot")
     st.write("Type your query below and get a response!")
 
     # Initialize session state for storing conversation history
