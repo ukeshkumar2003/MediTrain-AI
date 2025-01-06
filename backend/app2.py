@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -12,6 +13,8 @@ from langchain_core.prompts import (
 from langchain_core.messages import SystemMessage
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 from langchain_groq import ChatGroq
+
+load_dotenv()
 
 app = Flask(__name__)
 
