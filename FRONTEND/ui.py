@@ -64,7 +64,7 @@ elif menu == "About":
 
     st.write("### Contact Us")
     st.write("- Email: support@meditrain.ai")
-    st.write("- Website: [Meditrain AI](https://meditrain.ai)")
+    st.write("- Website: [meditrain-ai-ukesh.streamlit.app](https://meditrain.ai)")
 
     st.write("### Our Mission")
     st.write("""
