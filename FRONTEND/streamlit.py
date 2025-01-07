@@ -3,10 +3,11 @@ import requests
 import os
 from dotenv import load_dotenv
 
+# Load environment variables from .env file
 load_dotenv()
-# Set up the Streamlit app
 
-API_URL = os.environ.get("BACKEND_URL")
+# Set up the Streamlit app
+API_URL = os.environ.get("BACKEND_URL")  # Ensure .env file has BACKEND_URL
 
 def main():
     st.title("MediTrain-AI bot")
@@ -27,8 +28,7 @@ def main():
 
             try:
                 # Make the POST request to the API endpoint
-                # Replace 'API_ENDPOINT_URL' with the actual endpoint URL
-                response = requests.post(f"{backend_url}/response", json=payload)
+                response = requests.post(f"{API_URL}/response", json=payload)
 
                 if response.status_code == 200:
                     # Parse the JSON response
@@ -41,7 +41,7 @@ def main():
                     st.session_state["conversation"].append(
                         {"user": user_query, "bot": bot_response}
                     )
-                    # st.success(f"Chatbot: {bot_response}")
+                    st.success(f"Chatbot: {bot_response}")  # You can use this if needed
                 else:
                     st.error(
                         f"Error {response.status_code}: Unable to get a response from the API."
@@ -56,7 +56,6 @@ def main():
     for chat in st.session_state["conversation"]:
         st.write(f"**You:** {chat['user']}")
         st.write(f"**Chatbot:** {chat['bot']}")
-
 
 if __name__ == "__main__":
     main()
