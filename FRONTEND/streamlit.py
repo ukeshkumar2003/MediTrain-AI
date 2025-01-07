@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 # Set up the Streamlit app
 
-API_URL = os.environ.get("backend_url")
+API_URL = os.environ.get("BACKEND_URL")
 
 def main():
     st.title("MediTrain-AI bot")
